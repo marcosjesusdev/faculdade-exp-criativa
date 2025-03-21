@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Avenir&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Georgia&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-auth {
+  background-image: url("/bg-register-login-2.jpg"); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh; /* Garante que cobre toda a tela */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cabeçalho e rodapé transparentes */
+.bg-transparent {
+  background-color: rgba(0, 0, 0, 0); /* Ajuste conforme necessário */
+}
+
+/* Transparent Footer and Header */
+header, footer {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+@font-face {
+  font-family: "Avenir Black";
+  src: url("/src/assets/fonts/Avenir-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Avenir";
+  src: url("/src/assets/fonts/AvenirLTStd-Roman.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Avenir Light";
+  src: url("/src/assets/fonts/AvenirLTStd-Book.otf") format("opentype");
+}
+
+/* Definição global para garantir que as fontes sejam aplicadas */
+body {
+  font-family: "Avenir", sans-serif;
+}
