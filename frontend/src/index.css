@@ -9,14 +9,14 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  min-height: 100vh; /* Garante que cobre toda a tela */
+  min-height: 100vh; 
   display: flex;
   flex-direction: column;
 }
 
 /* Cabeçalho e rodapé transparentes */
 .bg-transparent {
-  background-color: rgba(0, 0, 0, 0); /* Ajuste conforme necessário */
+  background-color: rgba(0, 0, 0, 0); 
 }
 
 /* Transparent Footer and Header */
@@ -41,7 +41,6 @@ header, footer {
   src: url("/src/assets/fonts/AvenirLTStd-Book.otf") format("opentype");
 }
 
-/* Definição global para garantir que as fontes sejam aplicadas */
 body {
   font-family: "Avenir", sans-serif;
 }

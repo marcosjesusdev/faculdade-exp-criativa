@@ -18,7 +18,7 @@ export const createUser = async (userData) => {
 // Função para login
 export const loginUser = async (userData) => {
   try {
-    const response = await api.post('/login', userData); // Rota para login no backend
+    const response = await api.post('/users/login', userData); // Rota para login no backend
     return response.data; // Retorna os dados do usuário logado
   } catch (error) {
     throw new Error("Erro ao realizar o login");
@@ -34,4 +34,24 @@ export const getUsers = async () => {
   });
   
   return response.data;
+};
+
+
+// Função para atualizar usuário
+export const updateUser = async (id, userData) => {
+  const response = await fetch(`http://localhost:8800/users/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
+  });
+  return response.json();
+};
+
+
+// Função para deletar usuário
+export const deleteUser = async (id) => {
+  const response = await fetch(`http://localhost:8800/users/${id}`, {
+    method: "DELETE",
+  });
+  return response.json();
 };

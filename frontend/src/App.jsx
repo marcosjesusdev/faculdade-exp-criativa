@@ -1,10 +1,10 @@
 import React from "react";
 import Header from "./assets/components/Header";
-import Footer from "./assets/components/Footer"; // Caminho correto
+import Footer from "./assets/components/Footer"; 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Register from "./assets/pages/Register"; // Caminho correto
+import Register from "./assets/pages/Register"; 
 import Login from "./assets/pages/Login";
-import ListUsers from "./assets/pages/ListUsers"; // Página para listar os usuários
+import ListUsers from "./assets/pages/ListUsers"; 
 
 const App = () => {
   return (

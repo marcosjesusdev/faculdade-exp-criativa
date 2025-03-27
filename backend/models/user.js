@@ -25,7 +25,8 @@ const User = sequelize.define('User', {
     allowNull: false,
   },
 }, {
-  timestamps: true,
+  paranoid: true,  // Habilita o soft delete
+  timestamps: true, // Garante que as colunas createdAt, updatedAt e deletedAt sejam usadas
 });
 
 export { User };

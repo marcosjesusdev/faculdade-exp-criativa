@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createUser } from "../services/api"; // Importando o serviço
+import { createUser } from "../services/api"; 
 import FormInput from "../components/FormInput";
 import Footer from "../components/Footer";
 import { FiUser, FiMail, FiLock } from "react-icons/fi"; // Ícones
@@ -15,9 +15,9 @@ const Register = () => {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false); // Controle da visibilidade da senha
-  const [passwordsMatch, setPasswordsMatch] = useState(true); // Controle se as senhas coincidem
-  const [emailValid, setEmailValid] = useState(true); // Controle se o e-mail é válido
+  const [passwordVisible, setPasswordVisible] = useState(false); 
+  const [passwordsMatch, setPasswordsMatch] = useState(true); 
+  const [emailValid, setEmailValid] = useState(true);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

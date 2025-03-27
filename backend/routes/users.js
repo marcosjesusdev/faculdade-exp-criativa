@@ -12,4 +12,11 @@ router.post('/', usersController.createUser);
 // Rota para login
 router.post('/login', usersController.loginUser);
 
+// Rota para atualizar usuário
+router.put("/:id", usersController.updateUser); 
+
+// Rota para deletar usuários
+router.delete("/:id", usersController.deleteUser);
+
+
 export default router;

@@ -5,13 +5,61 @@ import jwt from "jsonwebtoken"; // Para gerar o token de autenticação
 // Função para buscar todos os usuários
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.findAll(); // Encontrando todos os usuários
-    return res.json(users); // Retornando a lista de usuários
+    const users = await User.findAll(); 
+    return res.json(users); 
   } catch (error) {
     console.error("Erro ao buscar usuários:", error);
     return res.status(500).json({ message: "Erro ao buscar usuários" });
   }
 };
+
+// Função para rota de atualização de usuário
+export const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { name, email, password } = req.body;
+
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    // Se a senha foi fornecida, criptografa e atualiza
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await user.update({ name, email, password: hashedPassword });
+    } else {
+      // Caso contrário, apenas atualiza o nome e o email
+      await user.update({ name, email });
+    }
+
+    return res.json({ message: "Usuário atualizado com sucesso" });
+  } catch (error) {
+    return res.status(500).json({ error: "Erro ao atualizar usuário" });
+  }
+};
+
+
+// Função para rota soft delete de usuário
+export const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    await user.destroy(); // O Sequelize vai marcar o `deletedAt` automaticamente
+
+    return res.json({ message: "Usuário removido com sucesso (soft delete)" });
+  } catch (error) {
+    return res.status(500).json({ error: "Erro ao remover usuário" });
+  }
+};
+
+
+
 
 // Função para criar um novo usuário
 export const createUser = async (req, res) => {
@@ -25,7 +73,6 @@ export const createUser = async (req, res) => {
       });
   }
 
-  // Verificar se a senha e a confirmação de senha são iguais
   if (password !== confirmPassword) {
     return res.status(400).json({ message: "As senhas não coincidem!" });
   }
@@ -69,11 +116,7 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Usuário não encontrado!" });
     }
 
-    console.log("Usuário encontrado:", user);  // Log do usuário encontrado
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log("Senha válida:", isPasswordValid);  // Log da comparação de senha
-
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Senha inválida!" });
     }
@@ -90,4 +133,3 @@ export const loginUser = async (req, res) => {
     return res.status(500).json({ message: "Erro ao fazer login" });
   }
 };
-
