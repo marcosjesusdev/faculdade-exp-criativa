@@ -1,9 +1,9 @@
+// frontend/src/pages/Register.jsx
 import { useState } from "react";
-import { createUser } from "../services/api"; 
+import { createUser } from "../services/api";
 import FormInput from "../components/FormInput";
 import Footer from "../components/Footer";
-import { FiUser, FiMail, FiLock } from "react-icons/fi"; // Ícones
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Ícones para mostrar/ocultar a senha
+import { FiUser, FiMail, FiLock, FiPhone, FiMapPin } from "react-icons/fi";
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -11,67 +11,47 @@ const Register = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    cpf: "",
+    genero: "",
+    dataNascimento: "",
+    endereco: ""
   });
-
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false); 
-  const [passwordsMatch, setPasswordsMatch] = useState(true); 
-  const [emailValid, setEmailValid] = useState(true);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prevForm) => {
-      const updatedForm = { ...prevForm, [name]: value };
-
-      // Verificando se as senhas são iguais em tempo real
-      if (name === "password" || name === "confirmPassword") {
-        setPasswordsMatch(updatedForm.password === updatedForm.confirmPassword);
-      }
-
-      // Verificando se o e-mail contém "@" em tempo real
-      if (name === "email") {
-        setEmailValid(value.includes("@"));
-      }
-
-      return updatedForm;
-    });
-  };
-
-  const handlePasswordToggle = () => {
-    setPasswordVisible(!passwordVisible);
+    setForm(f => ({ ...f, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setLoading(true);
 
-    // Verificação final se o email tem "@"
     if (!form.email.includes("@")) {
-      setEmailValid(false);
+      setError("E-mail inválido");
       setLoading(false);
       return;
     }
-
-    if (!passwordsMatch) {
-      setError("As senhas não coincidem!");
+    if (form.password !== form.confirmPassword) {
+      setError("As senhas não coincidem");
+      setLoading(false);
+      return;
+    }
+    // Verificar que todos os campos estão preenchidos
+    if (!form.name || !form.email || !form.password || !form.confirmPassword ||
+        !form.cpf || !form.genero || !form.dataNascimento || !form.endereco) {
+      setError("Preencha todos os campos");
       setLoading(false);
       return;
     }
 
     try {
-      const userData = {
-        name: form.name,
-        email: form.email,
-        password: form.password,
-        confirmPassword: form.confirmPassword,
-      };
-
-      const newUser = await createUser(userData);
-      console.log("Usuário criado:", newUser);
-    } catch (error) {
-      setError("Erro ao criar o usuário. Verifique os dados e tente novamente.");
+      await createUser(form);
+      // aqui você pode redirecionar ou exibir mensagem de sucesso...
+    } catch {
+      setError("Erro ao cadastrar usuário");
     } finally {
       setLoading(false);
     }
@@ -80,72 +60,108 @@ const Register = () => {
   return (
     <div className="bg-auth min-h-screen flex flex-col">
       <div className="flex-grow flex items-center justify-center">
-        <div className="p-8 rounded-lg shadow-lg w-full max-w-md bg-transparent bg-opacity-70">
-          <h2 className="text-2xl font-georgia text-center mb-4 text-white">Cadastro</h2>
-          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <FormInput
-              label="Nome"
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="Digite seu nome"
-              icon={<FiUser />}
-              className="font-avenirLight placeholder-gray-400"
-            />
-            <FormInput
-              label="E-mail"
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Digite seu e-mail"
-              icon={<FiMail />}
-              className={`font-avenirLight placeholder-gray-400 ${!emailValid ? 'border-red-500' : ''}`}
-            />
-            {!emailValid && <p className="text-red-500 text-sm">O e-mail precisa conter '@'.</p>}
-            <FormInput
-              label="Senha"
-              type={passwordVisible ? "text" : "password"}
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Digite sua senha"
-              icon={<FiLock />}
-              className="font-avenirLight placeholder-gray-400"
-            />
-            <FormInput
-              label="Confirmar Senha"
-              type={passwordVisible ? "text" : "password"}
-              name="confirmPassword"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirme sua senha"
-              icon={<FiLock />}
-              className={`font-avenirLight placeholder-gray-400 ${!passwordsMatch ? 'border-red-500' : ''}`}
-            />
-            {!passwordsMatch && <p className="text-red-500 text-sm">As senhas não coincidem</p>}
+        <form
+          onSubmit={handleSubmit}
+          className="p-8 rounded-lg shadow-lg w-full max-w-md bg-transparent bg-opacity-70 space-y-4"
+        >
+          <h2 className="text-2xl font-georgia text-center text-white mb-4">
+            Cadastro
+          </h2>
+          {error && <p className="text-red-500 text-center">{error}</p>}
 
-            <div className="relative flex items-center justify-between">
-              <button
-                type="button"
-                onClick={handlePasswordToggle}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-              >
-                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
+          <FormInput
+            label="Nome"
+            name="name"
+            type="text"
+            icon={<FiUser />}
+            placeholder="Digite seu nome"
+            value={form.name}
+            onChange={handleChange}
+          />
 
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition font-avenir"
-              disabled={loading}
+          <FormInput
+            label="E-mail"
+            name="email"
+            type="email"
+            icon={<FiMail />}
+            placeholder="Digite seu e-mail"
+            value={form.email}
+            onChange={handleChange}
+          />
+
+          <FormInput
+            label="Senha"
+            name="password"
+            type="password"
+            icon={<FiLock />}
+            placeholder="Digite sua senha"
+            value={form.password}
+            onChange={handleChange}
+          />
+
+          <FormInput
+            label="Confirmar Senha"
+            name="confirmPassword"
+            type="password"
+            icon={<FiLock />}
+            placeholder="Confirme sua senha"
+            value={form.confirmPassword}
+            onChange={handleChange}
+          />
+
+          <FormInput
+            label="CPF"
+            name="cpf"
+            type="text"
+            icon={<FiPhone />}
+            placeholder="000.000.000-00"
+            value={form.cpf}
+            onChange={handleChange}
+          />
+
+          <div>
+            <label className="block text-white mb-1 font-semibold">Gênero</label>
+            <select
+              name="genero"
+              value={form.genero}
+              onChange={handleChange}
+              className="w-full p-2 rounded bg-white text-black"
+              required
             >
-              {loading ? "Cadastrando..." : "Cadastrar"}
-            </button>
-          </form>
-        </div>
+              <option value="">Selecione</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+
+          <FormInput
+            label="Data de Nascimento"
+            name="dataNascimento"
+            type="date"
+            placeholder="Selecione a data"
+            value={form.dataNascimento}
+            onChange={handleChange}
+          />
+
+          <FormInput
+            label="Endereço"
+            name="endereco"
+            type="text"
+            icon={<FiMapPin />}
+            placeholder="Rua, número, bairro"
+            value={form.endereco}
+            onChange={handleChange}
+          />
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
+          >
+            {loading ? "Cadastrando..." : "Cadastrar"}
+          </button>
+        </form>
       </div>
       <Footer />
     </div>
