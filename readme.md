@@ -1,7 +1,7 @@
 # Documentação do Projeto
 
 ## Sobre o Projeto
-Este projeto consiste em um sistema de cadastro e listagem de usuários, utilizando **React (Vite) e Tailwind CSS** no frontend, e **Node.js com Sequelize e MySQL** no backend.
+Este projeto consiste em um sistema de CRUD de usuários, utilizando **React (Vite) e Tailwind CSS** no frontend, e **Node.js com Sequelize e MySQL** no backend.
 
 ## Tecnologias Utilizadas
 
@@ -17,7 +17,15 @@ Este projeto consiste em um sistema de cadastro e listagem de usuários, utiliza
 - Bcrypt para criptografia de senhas
 - Dotenv para gerenciamento de variáveis de ambiente
 
-## Instalação e Configuração
+---
+
+# ⚡️ INSTALAÇÃO - WINDOWS
+
+## Pré-requisitos
+- [Node.js](https://nodejs.org/) instalado
+- [MySQL](https://dev.mysql.com/downloads/mysql/) instalado
+
+## Passo a passo
 
 ### 1. Clonar o repositório
 ```sh
@@ -25,38 +33,26 @@ git clone git@github.com:marcosjesusdev/faculdade-exp-criativa.git
 cd faculdade-exp-criativa
 ```
 
-### 2. Utilizando Makefile para facilitar a configuração (opcional e recomendado)
+### 2. Instalar dependências manualmente
 
-#### Instalar dependências (backend e frontend) e rodar migrações:
+**Backend:**
 ```sh
-make install
-make migrate
+cd backend
+npm install
 ```
 
-#### Iniciar os servidores:
-Em dois terminais separados:
-
-Terminal 1 (Backend):
+**Frontend:**
 ```sh
-make start-backend
-```
-Terminal 2 (Frontend):
-```sh
-make start-frontend
+cd ../frontend
+npm install
 ```
 
-#### Comando resumido:
-```sh
-make all
-```
-> Esse comando faz a instalação e a migração, depois basta iniciar o backend e frontend manualmente.
+### 3. Configurar o Banco de Dados
+- Crie um banco no MySQL.
+- Importe o arquivo `backend/database/dump.sql`.
+- Configure o arquivo `backend/.env`:
 
-### 3. Configurar Variáveis de Ambiente
-
-#### Backend (`backend/.env`):
-Crie um arquivo `.env` com o seguinte conteúdo:
-
-```
+```env
 DB_HOST=localhost
 DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
@@ -66,14 +62,87 @@ DB_PORT=3306
 JWT_SECRET=sua_chave_secreta
 ```
 
-#### Frontend (`frontend/.env`) *(opcional)*:
+- (Opcional) Configure também o `frontend/.env`:
 ```env
 VITE_API_URL=http://localhost:8800
 ```
 
+### 4. Rodar o Backend e Frontend
+
+**Backend:**
+```sh
+cd backend
+npm start
+```
+
+**Frontend:**
+```sh
+cd frontend
+npm run dev
+```
+
+---
+# ⚡️ INSTALAÇÃO - LINUX/MAC
+
+## Pré-requisitos
+- [Node.js](https://nodejs.org/) instalado
+- [MySQL](https://dev.mysql.com/downloads/mysql/) instalado
+- `make` instalado (já vem instalado no MacOS e na maioria dos Linux)
+
+## Passo a passo
+
+### 1. Clonar o repositório
+```sh
+git clone git@github.com:marcosjesusdev/faculdade-exp-criativa.git
+cd faculdade-exp-criativa
+```
+
+### 2. Utilizar Makefile para automação
+
+**Instalar dependências e rodar migrações:**
+```sh
+make install
+make migrate
+```
+
+### 3. Configurar Variáveis de Ambiente
+
+**Backend (`backend/.env`):**
+```env
+DB_HOST=localhost
+DB_USER=seu_usuario
+DB_PASSWORD=sua_senha
+DB_NAME=seu_banco
+DB_DIALECT=mysql
+DB_PORT=3306
+JWT_SECRET=sua_chave_secreta
+```
+
+**Frontend (`frontend/.env`) (opcional):**
+```env
+VITE_API_URL=http://localhost:8800
+```
+
+### 4. Rodar o Backend e Frontend
+
+**Backend:**
+```sh
+make start-backend
+```
+
+**Frontend:**
+```sh
+make start-frontend
+```
+
+**Ou, para fazer tudo de uma vez (instalação + migração):**
+```sh
+make all
+```
+
 ---
 
-## Rotas Disponíveis
+# 📚 Rotas Disponíveis
 
 ### Backend (`/backend/routes/users.js`):
 | Método | Rota                | Descrição                         |
@@ -84,7 +153,7 @@ VITE_API_URL=http://localhost:8800
 | PUT    | /users/:id           | Atualizar usuário pelo ID        |
 | DELETE | /users/:id           | Deletar usuário pelo ID          |
 
-> Todas essas rotas são baseadas em `http://localhost:8800/users`.
+> Base URL: `http://localhost:8800/users`
 
 ---
 
@@ -99,7 +168,7 @@ VITE_API_URL=http://localhost:8800
 
 ---
 
-## Estrutura do Projeto
+# 🏗️ Estrutura do Projeto
 ```
 faculdade-exp-criativa/
 │── backend/           # Código do servidor Node.js
@@ -124,9 +193,10 @@ faculdade-exp-criativa/
 
 ---
 
-## Banco de Dados
-- Banco de dados MySQL.
-- A tabela `users` contém campos como:
+# 🗄️ Banco de Dados
+
+- Banco de dados: **MySQL**.
+- Tabela `users` contém:
   - `id` (chave primária)
   - `name`
   - `email`
@@ -138,40 +208,13 @@ faculdade-exp-criativa/
   - `createdAt`
   - `updatedAt`
 
-- O banco pode ser importado através do arquivo `backend/database/dump.sql` (exportação do banco).
+- Importe o banco através do arquivo:
+  ```
+  backend/database/dump.sql
+  ```
 
 ---
 
-## 📋 Makefile para Automação
-Arquivo `Makefile` que pode ser usado para facilitar o processo de instalação e execução:
 
-```makefile
-.PHONY: install migrate start-backend start-frontend all
-
-# Instala dependências do backend e frontend
-install:
-	cd backend && npm install
-	cd ../frontend && npm install
-
-# Executa as migrações do banco de dados
-migrate:
-	cd backend && npx sequelize-cli db:migrate
-
-# Inicia o servidor backend
-start-backend:
-	cd backend && npm run dev
-
-# Inicia o servidor frontend
-start-frontend:
-	cd frontend && npm run dev
-
-# Tudo junto: instala, migra e deixa pronto para rodar
-all: install migrate
-	@echo "Use 'make start-backend' e 'make start-frontend' em terminais separados."
-```
-
----
 
 # 🚀 Pronto para usar!
-
----
