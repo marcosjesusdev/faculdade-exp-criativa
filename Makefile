@@ -9,7 +9,7 @@ install:
 
 # Executa as migrações do banco de dados
 migrate:
-	cd backend && npx sequelize-cli db:migrate
+	cd backend && npx sequelize db:migrate
 
 # Inicia o servidor backend
 start-backend:
@@ -19,6 +19,6 @@ start-backend:
 start-frontend:
 	cd frontend && npm run dev
 
-# Tudo junto: instala, migra e inicia (útil para CI ou entrega automática)
+# Tudo junto: instala dependências e migra banco
 all: install migrate
-	@echo "Use 'make start-backend' e 'make start-frontend' em terminais separados"
+	@echo "Instalação e migração concluídas. Agora use 'make start-backend' e 'make start-frontend' em terminais separados para rodar o projeto."
