@@ -25,14 +25,36 @@ git clone git@github.com:marcosjesusdev/faculdade-exp-criativa.git
 cd faculdade-exp-criativa
 ```
 
-### 2. Configurar o Backend
+### 2. Utilizando Makefile para facilitar a configuração (opcional e recomendado)
+
+#### Instalar dependências (backend e frontend) e rodar migrações:
 ```sh
-cd backend
-npm install
+make install
+make migrate
 ```
 
-#### Criar o arquivo `.env` no diretório `backend/`
-Crie um arquivo `.env` na pasta `backend/` e configure as variáveis de ambiente:
+#### Iniciar os servidores:
+Em dois terminais separados:
+
+Terminal 1 (Backend):
+```sh
+make start-backend
+```
+Terminal 2 (Frontend):
+```sh
+make start-frontend
+```
+
+#### Comando resumido:
+```sh
+make all
+```
+> Esse comando faz a instalação e a migração, depois basta iniciar o backend e frontend manualmente.
+
+### 3. Configurar Variáveis de Ambiente
+
+#### Backend (`backend/.env`):
+Crie um arquivo `.env` com o seguinte conteúdo:
 
 ```
 DB_HOST=localhost
@@ -44,40 +66,38 @@ DB_PORT=3306
 JWT_SECRET=sua_chave_secreta
 ```
 
-O arquivo de configuração do banco agora usa `config.js` para carregar essas variáveis de ambiente.
-
-Depois, rode as migrações do banco de dados:
-```sh
-npx sequelize db:migrate
-```
-
-Para iniciar o servidor backend:
-```sh
-npm run dev
-```
-O backend rodará em `http://localhost:8800`.
-
-### 3. Configurar o Frontend
-```sh
-cd ../frontend
-npm install
-```
-Se quiser adicionar um `.env` no frontend (opcional), crie o arquivo `frontend/.env` e adicione:
-```
+#### Frontend (`frontend/.env`) *(opcional)*:
+```env
 VITE_API_URL=http://localhost:8800
 ```
 
-Para iniciar o frontend:
-```sh
-npm run dev
-```
-O frontend rodará em `http://localhost:5173`.
+---
 
-## Uso do Sistema
-1. **Cadastro**: O usuário pode se cadastrar informando nome, e-mail e senha.
-2. **Login**: O usuário pode fazer login com e-mail e senha.
-3. **Listagem de Usuários**: Após logar, o usuário tem acesso à lista de usuários cadastrados.
-4. **Edição/Exclusão**: É possível editar ou excluir usuários cadastrados.
+## Rotas Disponíveis
+
+### Backend (`/backend/routes/users.js`):
+| Método | Rota                | Descrição                         |
+|--------|---------------------|-----------------------------------|
+| GET    | /users               | Buscar todos os usuários         |
+| POST   | /users               | Criar um novo usuário            |
+| POST   | /users/login         | Login de usuário                 |
+| PUT    | /users/:id           | Atualizar usuário pelo ID        |
+| DELETE | /users/:id           | Deletar usuário pelo ID          |
+
+> Todas essas rotas são baseadas em `http://localhost:8800/users`.
+
+---
+
+### Frontend (`/frontend/src/pages/`):
+| Caminho | Componente         | Descrição                         |
+|---------|--------------------|-----------------------------------|
+| /login  | Login               | Tela de login de usuários         |
+| /register | Register          | Tela de cadastro de novos usuários|
+| /listar-usuarios | ListUsers   | Tela de listagem de usuários      |
+
+> O frontend roda em `http://localhost:5173`.
+
+---
 
 ## Estrutura do Projeto
 ```
@@ -86,17 +106,72 @@ faculdade-exp-criativa/
 │   ├── models/        # Modelos do Sequelize
 │   ├── controllers/   # Controladores das rotas
 │   ├── routes/        # Definição de rotas
-│   ├── config/        # Configuração do banco de dados (config.js)
-│   ├── .env           # Configuração de variáveis de ambiente
+│   ├── config/        # Configuração do banco de dados
+│   ├── .env           # Variáveis de ambiente
 │   └── server.js      # Arquivo principal do servidor
 │
 │── frontend/          # Código do aplicativo React
 │   ├── src/           # Código fonte
 │   ├── components/    # Componentes reutilizáveis
 │   ├── pages/         # Páginas do sistema
-│   ├── .env           # (Opcional) Configuração de ambiente
-│   └── main.jsx       # Arquivo principal do React
+│   ├── .env           # (Opcional) Variáveis de ambiente
+│   └── main.jsx       # Entrada do aplicativo React
 │
 │── README.md          # Documentação do projeto
+│── Makefile           # Automação de instalação e execução
 │── .gitignore         # Arquivos ignorados pelo Git
 ```
+
+---
+
+## Banco de Dados
+- Banco de dados MySQL.
+- A tabela `users` contém campos como:
+  - `id` (chave primária)
+  - `name`
+  - `email`
+  - `password`
+  - `cpf`
+  - `genero`
+  - `dataNascimento`
+  - `telefone`
+  - `createdAt`
+  - `updatedAt`
+
+- O banco pode ser importado através do arquivo `backend/database/dump.sql` (exportação do banco).
+
+---
+
+## 📋 Makefile para Automação
+Arquivo `Makefile` que pode ser usado para facilitar o processo de instalação e execução:
+
+```makefile
+.PHONY: install migrate start-backend start-frontend all
+
+# Instala dependências do backend e frontend
+install:
+	cd backend && npm install
+	cd ../frontend && npm install
+
+# Executa as migrações do banco de dados
+migrate:
+	cd backend && npx sequelize-cli db:migrate
+
+# Inicia o servidor backend
+start-backend:
+	cd backend && npm run dev
+
+# Inicia o servidor frontend
+start-frontend:
+	cd frontend && npm run dev
+
+# Tudo junto: instala, migra e deixa pronto para rodar
+all: install migrate
+	@echo "Use 'make start-backend' e 'make start-frontend' em terminais separados."
+```
+
+---
+
+# 🚀 Pronto para usar!
+
+---
